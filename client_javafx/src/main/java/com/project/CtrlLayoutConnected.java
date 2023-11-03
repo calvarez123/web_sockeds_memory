@@ -13,7 +13,9 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 
 public class CtrlLayoutConnected {
 
@@ -37,6 +39,8 @@ public class CtrlLayoutConnected {
 
     @FXML
     private ImageView imagen1,imagen2,imagen3,imagen4,imagen5,imagen6,imagen7,imagen8,imagen9,imagen10,imagen11,imagen12,imagen13,imagen14;
+
+    Image nuevaImagen = new Image("/assets/rojo.png");
 
     public void initialize() {
 
@@ -62,9 +66,12 @@ public class CtrlLayoutConnected {
             for (int i = 0; i < clientsList.getItems().size(); i++) {
                 clientsList.getSelectionModel().clearSelection(i);
             }
+            
 
             appData.updateClientList();
         });
+
+        
     
         clientsList.setCellFactory(lv -> new ListCell<String>() {
             @Override
@@ -85,7 +92,16 @@ public class CtrlLayoutConnected {
             }
         });
     }
+    
+    @FXML
+    public void imgpressed(MouseEvent event) {
+        ImageView sourceimagen = (ImageView) event.getSource();
 
+        System.out.println("Se hizo clic en la imagen--> soy el boton "+sourceimagen);
+        System.out.println("voy a quitar el boton ");
+        sourceimagen.setImage(nuevaImagen);
+        
+    }
     
     
     @FXML
