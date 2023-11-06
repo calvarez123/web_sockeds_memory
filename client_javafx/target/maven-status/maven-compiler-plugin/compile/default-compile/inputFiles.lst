@@ -1,8 +1,8 @@
-/home/super/profes_repos/procesos_m09/DAM-WebSockets/client_javafx/src/main/java/com/project/AppSocketsClient.java
-/home/super/profes_repos/procesos_m09/DAM-WebSockets/client_javafx/src/main/java/com/project/CtrlLayoutDisconnected.java
-/home/super/profes_repos/procesos_m09/DAM-WebSockets/client_javafx/src/main/java/com/project/CtrlLayoutConnected.java
-/home/super/profes_repos/procesos_m09/DAM-WebSockets/client_javafx/src/main/java/com/project/CtrlLayoutDisconnecting.java
-/home/super/profes_repos/procesos_m09/DAM-WebSockets/client_javafx/src/main/java/com/project/CtrlLayoutConnecting.java
-/home/super/profes_repos/procesos_m09/DAM-WebSockets/client_javafx/src/main/java/com/project/UtilsViews.java
-/home/super/profes_repos/procesos_m09/DAM-WebSockets/client_javafx/src/main/java/com/project/AppData.java
-/home/super/profes_repos/procesos_m09/DAM-WebSockets/client_javafx/src/main/java/com/project/Main.java
+/home/super/repositorios/web_sockeds_memory/client_javafx/src/main/java/com/project/CtrlLayoutDisconnected.java
+/home/super/repositorios/web_sockeds_memory/client_javafx/src/main/java/com/project/AppSocketsClient.java
+/home/super/repositorios/web_sockeds_memory/client_javafx/src/main/java/com/project/CtrlLayoutConnecting.java
+/home/super/repositorios/web_sockeds_memory/client_javafx/src/main/java/com/project/AppData.java
+/home/super/repositorios/web_sockeds_memory/client_javafx/src/main/java/com/project/Main.java
+/home/super/repositorios/web_sockeds_memory/client_javafx/src/main/java/com/project/CtrlLayoutConnected.java
+/home/super/repositorios/web_sockeds_memory/client_javafx/src/main/java/com/project/UtilsViews.java
+/home/super/repositorios/web_sockeds_memory/client_javafx/src/main/java/com/project/CtrlLayoutDisconnecting.java

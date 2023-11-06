@@ -1,5 +1,7 @@
 package com.project;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javafx.application.Platform;
@@ -38,11 +40,55 @@ public class CtrlLayoutConnected {
     private Button sendButton;
 
     @FXML
-    private ImageView imagen1,imagen2,imagen3,imagen4,imagen5,imagen6,imagen7,imagen8,imagen9,imagen10,imagen11,imagen12,imagen13,imagen14;
+    private ImageView imagen1,imagen2,imagen3,imagen4,imagen5,imagen6,imagen7,imagen8,imagen9,imagen10,imagen11,imagen12,
+    imagen13,imagen14,imagen15,imagen16;
 
-    Image nuevaImagen = new Image("/assets/rojo.png");
+    @FXML
+    private List<ImageView> imageViews = new ArrayList<>();
+    
+    
+    
+    Image imagenInicial = new Image("/assets/imagen_inicial.png");
+
+    Image rojo = new Image("/assets/rojo.png");
+    Image negro = new Image("/assets/negro.png");
+    Image amarillo = new Image("/assets/amarillo.png");
+    Image blanco = new Image("/assets/blanco.png");
+    Image gris = new Image("/assets/gris.png");
+    Image naranja = new Image("/assets/naranja.png");
+    Image rosa = new Image("/assets/rosa.png");
+    Image verde = new Image("/assets/verde.png");
+
+    
+    
+    private Image estadoImagen1 = imagenInicial;
+
+    List<String> board_colors = new ArrayList<>(Arrays.asList("r", "a", "n", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "r", "-"));
+
+
+    List<String> board = new ArrayList<>(Arrays.asList("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"));
+
 
     public void initialize() {
+        imageViews.add(imagen1);
+        imageViews.add(imagen2);
+        imageViews.add(imagen3);
+        imageViews.add(imagen4);
+        imageViews.add(imagen5);
+        imageViews.add(imagen6);
+        imageViews.add(imagen7);
+        imageViews.add(imagen8);
+        imageViews.add(imagen9);
+        imageViews.add(imagen10);
+        imageViews.add(imagen11);
+        imageViews.add(imagen12);
+        imageViews.add(imagen13);
+        imageViews.add(imagen14);
+        imageViews.add(imagen15);
+        imageViews.add(imagen16);
+        
+
+        
 
         clientsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
@@ -91,15 +137,40 @@ public class CtrlLayoutConnected {
                 }
             }
         });
+
+        
     }
     
     @FXML
     public void imgpressed(MouseEvent event) {
         ImageView sourceimagen = (ImageView) event.getSource();
 
-        System.out.println("Se hizo clic en la imagen--> soy el boton "+sourceimagen);
-        System.out.println("voy a quitar el boton ");
-        sourceimagen.setImage(nuevaImagen);
+        // Obtiene el índice de la imagen en la lista
+        int imageIndex = imageViews.indexOf(sourceimagen);
+
+        Image color= null;
+
+        // Verifica el contenido del tablero en esa posición
+        if (board.get(imageIndex).equals("-")) {
+            // Si es "-", cambia a rojo
+            if (board_colors.get(imageIndex).equals("r")){
+                color = rojo;
+            }else if (board_colors.get(imageIndex).equals("a")){
+                color = amarillo;
+            }else if (board_colors.get(imageIndex).equals("n")){
+                color = negro;
+            }
+
+            sourceimagen.setImage(color);
+            board.set(imageIndex, board_colors.get(imageIndex));
+            
+        } else {
+            // Si no es "-", cambia a la imagen inicial
+            sourceimagen.setImage(imagenInicial);
+            board.set(imageIndex, "-");
+        }
+        System.out.println(board);
+        
         
     }
     
