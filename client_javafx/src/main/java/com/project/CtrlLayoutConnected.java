@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import java.util.Random;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -48,7 +49,7 @@ public class CtrlLayoutConnected {
     
     
     
-    Image imagenInicial = new Image("/assets/imagen_inicial.png");
+    Image imagenInicial = new Image("/assets/imagen_inicial.jpg");
 
     Image rojo = new Image("/assets/rojo.png");
     Image negro = new Image("/assets/negro.png");
@@ -58,17 +59,22 @@ public class CtrlLayoutConnected {
     Image naranja = new Image("/assets/naranja.png");
     Image rosa = new Image("/assets/rosa.png");
     Image verde = new Image("/assets/verde.png");
+    Image azul = new Image("/assets/azul.png");
 
+    // rojo,negro,amarillo,blanco,gris,naranja,rosa,verde
     
     
     private Image estadoImagen1 = imagenInicial;
 
-    List<String> board_colors = new ArrayList<>(Arrays.asList("r", "a", "n", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "r", "-"));
-
+    List<String> colors = Arrays.asList("rojo", "negro", "amarillo", "blanco", "gris", "naranja", "rosa", "verde");
+    List<String> board_colors = new ArrayList<>();
 
     List<String> board = new ArrayList<>(Arrays.asList("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"));
 
+    Random random = new Random();
+    
 
+    
     public void initialize() {
         imageViews.add(imagen1);
         imageViews.add(imagen2);
@@ -87,8 +93,12 @@ public class CtrlLayoutConnected {
         imageViews.add(imagen15);
         imageViews.add(imagen16);
         
-
         
+
+        for (int i = 0; i < 16; i++) {
+        int randomIndex = random.nextInt(colors.size());
+        board_colors.add(colors.get(randomIndex));
+    }
 
         clientsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
@@ -151,14 +161,26 @@ public class CtrlLayoutConnected {
         Image color= null;
 
         // Verifica el contenido del tablero en esa posición
+
+        // rojo,negro,amarillo,blanco,gris,naranja,rosa,verde
         if (board.get(imageIndex).equals("-")) {
             // Si es "-", cambia a rojo
-            if (board_colors.get(imageIndex).equals("r")){
+            if (board_colors.get(imageIndex).equals("rojo")){
                 color = rojo;
-            }else if (board_colors.get(imageIndex).equals("a")){
-                color = amarillo;
-            }else if (board_colors.get(imageIndex).equals("n")){
+            }else if (board_colors.get(imageIndex).equals("negro")){
                 color = negro;
+            }else if (board_colors.get(imageIndex).equals("amarillo")){
+                color = amarillo;
+            }else if (board_colors.get(imageIndex).equals("blanco")){
+                color = blanco;
+            }else if (board_colors.get(imageIndex).equals("gris")){
+                color = gris;
+            }else if (board_colors.get(imageIndex).equals("naranja")){
+                color = naranja;
+            }else if (board_colors.get(imageIndex).equals("rosa")){
+                color = rosa;
+            }else if (board_colors.get(imageIndex).equals("verde")){
+                color = verde;
             }
 
             sourceimagen.setImage(color);
