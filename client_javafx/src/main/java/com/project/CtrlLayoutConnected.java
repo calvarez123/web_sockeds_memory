@@ -2,6 +2,8 @@ package com.project;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import java.util.Random;
@@ -54,7 +56,6 @@ public class CtrlLayoutConnected {
     Image rojo = new Image("/assets/rojo.png");
     Image negro = new Image("/assets/negro.png");
     Image amarillo = new Image("/assets/amarillo.png");
-    Image blanco = new Image("/assets/blanco.png");
     Image gris = new Image("/assets/gris.png");
     Image naranja = new Image("/assets/naranja.png");
     Image rosa = new Image("/assets/rosa.png");
@@ -64,10 +65,7 @@ public class CtrlLayoutConnected {
     // rojo,negro,amarillo,blanco,gris,naranja,rosa,verde
     
     
-    private Image estadoImagen1 = imagenInicial;
-
-    List<String> colors = Arrays.asList("rojo", "negro", "amarillo", "blanco", "gris", "naranja", "rosa", "verde");
-    List<String> board_colors = new ArrayList<>();
+    List<String> board_colors = new ArrayList<>((Arrays.asList("rojo", "negro", "amarillo", "azul", "gris", "naranja", "rosa", "verde","rojo", "negro", "amarillo", "azul", "gris", "naranja", "rosa", "verde")));
 
     List<String> board = new ArrayList<>(Arrays.asList("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"));
 
@@ -93,13 +91,9 @@ public class CtrlLayoutConnected {
         imageViews.add(imagen15);
         imageViews.add(imagen16);
         
+        Collections.shuffle(board_colors);
         
-
-        for (int i = 0; i < 16; i++) {
-        int randomIndex = random.nextInt(colors.size());
-        board_colors.add(colors.get(randomIndex));
-    }
-
+        System.out.println(board_colors);
         clientsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
         clientsList.setOnMouseClicked(event -> {
@@ -171,8 +165,8 @@ public class CtrlLayoutConnected {
                 color = negro;
             }else if (board_colors.get(imageIndex).equals("amarillo")){
                 color = amarillo;
-            }else if (board_colors.get(imageIndex).equals("blanco")){
-                color = blanco;
+            }else if (board_colors.get(imageIndex).equals("azul")){
+                color = azul;
             }else if (board_colors.get(imageIndex).equals("gris")){
                 color = gris;
             }else if (board_colors.get(imageIndex).equals("naranja")){
