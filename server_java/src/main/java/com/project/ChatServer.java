@@ -4,6 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -12,6 +17,8 @@ import org.json.JSONObject;
 public class ChatServer extends WebSocketServer {
 
     static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    List<String> board_colors = new ArrayList<>((Arrays.asList("rojo", "negro", "amarillo", "azul", "gris", "naranja", "rosa", "verde","rojo", "negro", "amarillo", "azul", "gris", "naranja", "rosa", "verde")));
+
 
     public ChatServer (int port) {
         super(new InetSocketAddress(port));
@@ -26,6 +33,7 @@ public class ChatServer extends WebSocketServer {
         System.out.println("Type 'exit' to stop and exit server.");
         setConnectionLostTimeout(0);
         setConnectionLostTimeout(100);
+        Collections.shuffle(board_colors);
     }
 
     @Override
@@ -39,6 +47,7 @@ public class ChatServer extends WebSocketServer {
         objWlc.put("from", "server");
         objWlc.put("value", "Welcome to the chat server");
         conn.send(objWlc.toString()); 
+        
 
         // Li enviem el seu identificador
         JSONObject objId = new JSONObject("{}");
@@ -56,6 +65,13 @@ public class ChatServer extends WebSocketServer {
         objCln.put("from", "server");
         objCln.put("id", clientId);
         broadcast(objCln.toString());
+
+        //ENVIAR LA LISTA A TODOS LOS CLIENTES
+        JSONObject objResponse = new JSONObject("{}");
+        objResponse.put("type", "list");
+        objResponse.put("from", "server");
+        objResponse.put("list", board_colors);
+        conn.send(objResponse.toString()); 
 
         // Mostrem per pantalla (servidor) la nova connexió
         String host = conn.getRemoteSocketAddress().getAddress().getHostAddress();

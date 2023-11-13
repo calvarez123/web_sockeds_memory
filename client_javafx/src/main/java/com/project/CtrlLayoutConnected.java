@@ -48,6 +48,8 @@ public class CtrlLayoutConnected {
 
     @FXML
     private List<ImageView> imageViews = new ArrayList<>();
+
+    AppData infoData = AppData.getInstance();
     
     
     
@@ -65,7 +67,9 @@ public class CtrlLayoutConnected {
     // rojo,negro,amarillo,blanco,gris,naranja,rosa,verde
     
     
-    List<String> board_colors = new ArrayList<>((Arrays.asList("rojo", "negro", "amarillo", "azul", "gris", "naranja", "rosa", "verde","rojo", "negro", "amarillo", "azul", "gris", "naranja", "rosa", "verde")));
+    //List<String> board_colors = new ArrayList<>((Arrays.asList("rojo", "negro", "amarillo", "azul", "gris", "naranja", "rosa", "verde","rojo", "negro", "amarillo", "azul", "gris", "naranja", "rosa", "verde")));
+    
+    List<String> board_colors = infoData.getBoard_colors();
 
     List<String> board = new ArrayList<>(Arrays.asList("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"));
 
@@ -74,6 +78,8 @@ public class CtrlLayoutConnected {
 
     
     public void initialize() {
+        Collections.shuffle(board_colors);
+
         imageViews.add(imagen1);
         imageViews.add(imagen2);
         imageViews.add(imagen3);
@@ -91,7 +97,7 @@ public class CtrlLayoutConnected {
         imageViews.add(imagen15);
         imageViews.add(imagen16);
         
-        Collections.shuffle(board_colors);
+        
         
         System.out.println(board_colors);
         clientsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);

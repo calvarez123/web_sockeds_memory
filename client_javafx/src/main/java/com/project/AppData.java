@@ -31,6 +31,8 @@ public class AppData {
     private Integer selectedClientIndex;
     private StringBuilder messages = new StringBuilder();
 
+    private List<String> board_colors = new ArrayList<>();
+
     public enum ConnectionStatus {
         DISCONNECTED, DISCONNECTING, CONNECTING, CONNECTED
     }
@@ -120,11 +122,15 @@ public class AppData {
         String type = data.getString("type");
         switch (type) {
             case "list":
-                clients.clear();
-                data.getJSONArray("list").forEach(item -> clients.add(item.toString()));
-                clients.remove(mySocketId);
-                messages.append("List of clients: ").append(data.getJSONArray("list")).append("\n");
-                updateClientList();
+                //clients.clear();
+                //data.getJSONArray("list").forEach(item -> clients.add(item.toString()));
+                //clients.remove(mySocketId);
+                //messages.append("List of clients: ").append(data.getJSONArray("list")).append("\n");
+                //updateClientList();
+                board_colors.clear();
+                data.getJSONArray("list").forEach(item -> board_colors.add(item.toString()));
+                board_colors.remove(mySocketId);
+                
                 break;
             case "id":
                 mySocketId = data.getString("value");
@@ -187,6 +193,7 @@ public class AppData {
             ctrlConnected.updateClientList(clients);
         }
     }
+    
 
     public void selectClient(int index) {
         if (selectedClientIndex == null || selectedClientIndex != index) {
@@ -209,6 +216,17 @@ public class AppData {
             privateMessage(msg);
         }
     }
+
+
+
+    public List<String> getBoard_colors() {
+        return this.board_colors;
+    }
+
+    public void setBoard_colors(List<String> board_colors) {
+        this.board_colors = board_colors;
+    }
+    
 
     public void broadcastMessage(String msg) {
         JSONObject message = new JSONObject();
