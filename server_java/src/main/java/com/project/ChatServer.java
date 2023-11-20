@@ -18,7 +18,7 @@ public class ChatServer extends WebSocketServer {
 
     static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     List<String> board_colors = new ArrayList<>((Arrays.asList("rojo", "negro", "amarillo", "azul", "gris", "naranja", "rosa", "verde","rojo", "negro", "amarillo", "azul", "gris", "naranja", "rosa", "verde")));
-
+    List<String> board = new ArrayList<>(Arrays.asList("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"));
 
     public ChatServer (int port) {
         super(new InetSocketAddress(port));
@@ -102,6 +102,16 @@ public class ChatServer extends WebSocketServer {
             JSONObject objRequest = new JSONObject(message);
             String type = objRequest.getString("type");
 
+            if (type.equalsIgnoreCase("board")) {
+                JSONObject objResponse = new JSONObject("{}");
+                objResponse.put("type", "board");
+                objResponse.put("from", "value");
+                objResponse.put("list", board);
+                conn.send(objResponse.toString()); 
+                System.out.println(board_colors);
+                System.out.println("--------------------------------");
+                System.out.println(board);
+            }
             if (type.equalsIgnoreCase("list")) {
                 // El client demana la llista de tots els clients
                 System.out.println("Client '" + clientId + "'' requests list of clients");
@@ -172,6 +182,8 @@ public class ChatServer extends WebSocketServer {
         conn.send(objResponse.toString()); 
     }
 
+  
+
     public String getConnectionId (WebSocket connection) {
         String name = connection.toString();
         return name.replaceAll("org.java_websocket.WebSocketImpl@", "").substring(0, 3);
@@ -188,6 +200,7 @@ public class ChatServer extends WebSocketServer {
         }
         return clients;
     }
+
 
     public WebSocket getClientById (String clientId) {
         for (WebSocket ws : getConnections()) {

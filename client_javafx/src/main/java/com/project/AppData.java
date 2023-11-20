@@ -33,6 +33,8 @@ public class AppData {
 
     private List<String> board_colors = new ArrayList<>();
 
+    private List<String> board = new ArrayList<>();
+
     public enum ConnectionStatus {
         DISCONNECTED, DISCONNECTING, CONNECTING, CONNECTED
     }
@@ -121,6 +123,16 @@ public class AppData {
 
         String type = data.getString("type");
         switch (type) {
+            case "board":
+                board.clear();
+                data.getJSONArray("list").forEach(item -> board.add(item.toString()));
+                board.remove(mySocketId);
+                System.out.println("board enviado");
+                System.out.println(board);
+              
+                
+                break;
+            
             case "list":
                 //clients.clear();
                 //data.getJSONArray("list").forEach(item -> clients.add(item.toString()));
@@ -128,6 +140,7 @@ public class AppData {
                 //messages.append("List of clients: ").append(data.getJSONArray("list")).append("\n");
                 //updateClientList();
                 board_colors.clear();
+                System.out.println("mueve este");
                 data.getJSONArray("list").forEach(item -> board_colors.add(item.toString()));
                 board_colors.remove(mySocketId);
                 
@@ -226,11 +239,25 @@ public class AppData {
     public void setBoard_colors(List<String> board_colors) {
         this.board_colors = board_colors;
     }
+
+    public List<String> getBoard() {
+        return this.board_colors;
+    }
+
+    public void setBoard(List<String> board_colors) {
+        this.board_colors = board_colors;
+    }
     
 
     public void broadcastMessage(String msg) {
         JSONObject message = new JSONObject();
         message.put("type", "broadcast");
+        message.put("value", msg);
+        socketClient.send(message.toString());
+    }
+    public void MessegeBoard(List<String> msg) {
+        JSONObject message = new JSONObject();
+        message.put("type", "board");
         message.put("value", msg);
         socketClient.send(message.toString());
     }

@@ -185,6 +185,11 @@ public class CtrlLayoutConnected {
 
             sourceimagen.setImage(color);
             board.set(imageIndex, board_colors.get(imageIndex));
+            infoData.setBoard(board);
+            infoData.MessegeBoard(board);
+            System.out.println("board enviado");
+            System.err.println(board);
+            
             
         } else {
             // Si no es "-", cambia a la imagen inicial
