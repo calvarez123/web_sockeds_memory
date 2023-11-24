@@ -3,6 +3,7 @@ package com.project;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONObject;
 
+import com.project.AppData.ConnectionStatus;
 import com.project.AppSocketsClient.OnCloseObject;
 
 import javafx.animation.PauseTransition;
@@ -129,16 +130,10 @@ public class AppData {
                 board.remove(mySocketId);
                 System.out.println("board enviado");
                 System.out.println(board);
-              
-                
+                CtrlLayoutConnected.actualizarBoard(board);
                 break;
             
             case "list":
-                //clients.clear();
-                //data.getJSONArray("list").forEach(item -> clients.add(item.toString()));
-                //clients.remove(mySocketId);
-                //messages.append("List of clients: ").append(data.getJSONArray("list")).append("\n");
-                //updateClientList();
                 board_colors.clear();
                 System.out.println("mueve este");
                 data.getJSONArray("list").forEach(item -> board_colors.add(item.toString()));

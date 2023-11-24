@@ -12,6 +12,7 @@ import java.util.List;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ChatServer extends WebSocketServer {
@@ -103,14 +104,15 @@ public class ChatServer extends WebSocketServer {
             String type = objRequest.getString("type");
 
             if (type.equalsIgnoreCase("board")) {
+                JSONArray jsonArray = objRequest.getJSONArray("value");
+                List<String> Actualizadoboard = convertirJSONArrayALista(jsonArray);
+                setBoard(Actualizadoboard);
+
                 JSONObject objResponse = new JSONObject("{}");
                 objResponse.put("type", "board");
-                objResponse.put("from", "value");
-                objResponse.put("list", board);
+                objResponse.put("list", getBoard());
                 conn.send(objResponse.toString()); 
-                System.out.println(board_colors);
-                System.out.println("--------------------------------");
-                System.out.println(board);
+            
             }
             if (type.equalsIgnoreCase("list")) {
                 // El client demana la llista de tots els clients
@@ -211,5 +213,25 @@ public class ChatServer extends WebSocketServer {
         }
         
         return null;
+    }
+
+    public List<String> getBoard() {
+        return board;
+    }
+
+    // Setter para establecer la lista completa
+    public void setBoard(List<String> board) {
+        this.board = board;
+    }
+
+    public static List<String> convertirJSONArrayALista(JSONArray jsonArray) {
+        List<String> lista = new ArrayList<>();
+
+        // Iterar sobre el JSONArray y agregar elementos a la lista
+        for (int i = 0; i < jsonArray.length(); i++) {
+            lista.add(jsonArray.getString(i));
+        }
+
+        return lista;
     }
 }

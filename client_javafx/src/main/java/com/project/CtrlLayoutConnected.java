@@ -71,7 +71,7 @@ public class CtrlLayoutConnected {
     
     List<String> board_colors = infoData.getBoard_colors();
 
-    List<String> board = new ArrayList<>(Arrays.asList("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"));
+    static List<String> board = new ArrayList<>(Arrays.asList("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"));
 
     Random random = new Random();
     
@@ -229,6 +229,18 @@ public class CtrlLayoutConnected {
     public void updateClientList(List<String> clients) {
         Platform.runLater(() -> {
             clientsList.setItems(FXCollections.observableArrayList(clients));
+        });
+    }
+
+    public static void actualizarBoard(List<String> nuevoBoard) {
+   
+        // También puedes asignar el nuevo board a la variable de instancia si es necesario
+        board = nuevoBoard;
+    }
+
+    public void actualizarBoard(List<String> nuevoBoard) {
+        Platform.runLater(() -> {
+            board.setItems(FXCollections.observableArrayList(board));
         });
     }
 }
