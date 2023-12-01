@@ -7,6 +7,7 @@ import com.project.AppData.ConnectionStatus;
 import com.project.AppSocketsClient.OnCloseObject;
 
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.util.Duration;
 
 import java.net.InetAddress;
@@ -32,12 +33,43 @@ public class AppData {
     private Integer selectedClientIndex;
     private StringBuilder messages = new StringBuilder();
 
+    private int puntuacionMia = 0;
+    private int puntuacionRival = 0;
+
+    boolean tuTurno;
+
+    int aciertos = 0;
+
     private List<String> board_colors = new ArrayList<>();
 
     private List<String> board = new ArrayList<>();
 
+
     public enum ConnectionStatus {
         DISCONNECTED, DISCONNECTING, CONNECTING, CONNECTED
+    }
+    public int getPuntuacionMia() {
+        return puntuacionMia;
+    }
+
+    public int getAciertos() {
+        return aciertos;
+    }
+
+    public void setAciertos(int aciertos) {
+        this.aciertos = aciertos;
+    }
+
+    public  void setPuntuacionMia(int nuevaPuntuacionMia) {
+        puntuacionMia = nuevaPuntuacionMia;
+    }
+
+    public  int getPuntuacionRival() {
+        return puntuacionRival;
+    }
+
+    public  void setPuntuacionRival(int nuevaPuntuacionRival) {
+        puntuacionRival = nuevaPuntuacionRival;
     }
 
     private AppData() {
@@ -124,13 +156,29 @@ public class AppData {
 
         String type = data.getString("type");
         switch (type) {
+            case "turno":
+                tuTurno = true;
+                System.out.println("lo recibi");
+                
+                break;
             case "board":
+                CtrlLayoutConnected layautcoenConnected = new CtrlLayoutConnected();
                 board.clear();
                 data.getJSONArray("list").forEach(item -> board.add(item.toString()));
+                setPuntuacionRival(data.getInt("puntuacion"));
+
+                
+
+                String miPuntuacion = String.valueOf(puntuacionMia);
+
                 board.remove(mySocketId);
-                System.out.println("board enviado");
+                System.out.println("board recibido");
                 System.out.println(board);
-                CtrlLayoutConnected.actualizarBoard(board);
+
+                layautcoenConnected.actualizarBoard(board);
+                
+            
+                
                 break;
             
             case "list":
@@ -250,9 +298,11 @@ public class AppData {
         message.put("value", msg);
         socketClient.send(message.toString());
     }
-    public void MessegeBoard(List<String> msg) {
+    public void MessegeBoard(List<String> msg,int puntuacion) {
         JSONObject message = new JSONObject();
         message.put("type", "board");
+        message.put("from", "cliente");
+        message.put("puntuacion", puntuacion);
         message.put("value", msg);
         socketClient.send(message.toString());
     }

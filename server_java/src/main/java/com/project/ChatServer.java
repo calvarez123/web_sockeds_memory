@@ -20,6 +20,9 @@ public class ChatServer extends WebSocketServer {
     static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     List<String> board_colors = new ArrayList<>((Arrays.asList("rojo", "negro", "amarillo", "azul", "gris", "naranja", "rosa", "verde","rojo", "negro", "amarillo", "azul", "gris", "naranja", "rosa", "verde")));
     List<String> board = new ArrayList<>(Arrays.asList("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"));
+    private static final List<String> connectedClients = new ArrayList<>();
+    private static int turnoActual = 0;
+
 
     public ChatServer (int port) {
         super(new InetSocketAddress(port));
@@ -77,6 +80,26 @@ public class ChatServer extends WebSocketServer {
         // Mostrem per pantalla (servidor) la nova connexió
         String host = conn.getRemoteSocketAddress().getAddress().getHostAddress();
         System.out.println("New client (" + clientId + "): " + host);
+
+        connectedClients.add(getConnectionId(conn));
+        if (connectedClients.size() == 1) {
+            System.err.println("ennviado");
+            // Es el primer cliente, comienza el turno
+            enviarTurno(conn);
+        }
+    }
+
+    private void enviarTurno(WebSocket conn) {
+        // Obtener el cliente actual para el turno
+        String clienteTurno = connectedClients.get(turnoActual);
+    
+        // Enviar mensaje al cliente actual indicando que es su turno
+        JSONObject objTurno = new JSONObject("{}");
+        objTurno.put("type", "turno");
+        objTurno.put("from", "server");
+        objTurno.put("clienteTurno", clienteTurno);
+        conn.send(objTurno.toString());
+    
     }
 
     @Override
@@ -93,6 +116,8 @@ public class ChatServer extends WebSocketServer {
 
         // Mostrem per pantalla (servidor) la desconnexió
         System.out.println("Client disconnected '" + clientId + "'");
+
+        connectedClients.clear();
     }
 
     @Override
@@ -105,13 +130,17 @@ public class ChatServer extends WebSocketServer {
 
             if (type.equalsIgnoreCase("board")) {
                 JSONArray jsonArray = objRequest.getJSONArray("value");
+                int puntuacionRival = objRequest.getInt("puntuacion");
+                System.out.println(puntuacionRival);
                 List<String> Actualizadoboard = convertirJSONArrayALista(jsonArray);
                 setBoard(Actualizadoboard);
 
                 JSONObject objResponse = new JSONObject("{}");
                 objResponse.put("type", "board");
+                objResponse.put("puntuacion", puntuacionRival);
                 objResponse.put("list", getBoard());
-                conn.send(objResponse.toString()); 
+                broadcast(objResponse.toString()); 
+                
             
             }
             if (type.equalsIgnoreCase("list")) {
@@ -138,18 +167,18 @@ public class ChatServer extends WebSocketServer {
             } else if (type.equalsIgnoreCase("broadcast")) {
                 // El client envia un missatge a tots els clients
                 System.out.println("Client '" + clientId + "'' sends a broadcast message to everyone");
-
-                JSONObject objResponse = new JSONObject("{}");
-                objResponse.put("type", "broadcast");
-                objResponse.put("from", clientId);
-                objResponse.put("value", objRequest.getString("value"));
-                broadcast(objResponse.toString());
+             
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    /*JSONObject objResponse = new JSONObject("{}");
+                objResponse.put("type", "broadcast");
+                objResponse.put("list", getBoard());
+                broadcast(objResponse.toString()); */
 
     @Override
     public void onError(WebSocket conn, Exception ex) {

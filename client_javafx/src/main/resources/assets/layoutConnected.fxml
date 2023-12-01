@@ -73,11 +73,11 @@
                   <Font size="18.0" />
                </font>
             </Text>
-            <Text fx:id="puntuacion1" strokeType="OUTSIDE" strokeWidth="0.0" text="10" wrappingWidth="276.4462890625">
+            <Label fx:id="puntuacion1" prefHeight="25.0" prefWidth="164.0">
                <font>
                   <Font size="18.0" />
                </font>
-            </Text>
+            </Label>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="En espera" wrappingWidth="96.4462890625">
                <font>
                   <Font size="18.0" />
@@ -93,11 +93,11 @@
                   <Font size="18.0" />
                </font>
             </Text>
-            <Text fx:id="puntuacion2" strokeType="OUTSIDE" strokeWidth="0.0" text="10" wrappingWidth="75.4462890625">
+            <Label fx:id="puntuacion2" prefHeight="25.0" prefWidth="164.0">
                <font>
                   <Font size="18.0" />
                </font>
-            </Text>
+            </Label>
          </children>
       </HBox>
       <GridPane alignment="TOP_CENTER" layoutX="169.0" layoutY="102.0" prefHeight="365.0" prefWidth="462.0">
@@ -196,5 +196,8 @@
             </ImageView>
          </children>
       </GridPane>
+      <Label fx:id="labelMiTurno" layoutX="48.0" layoutY="246.0" prefHeight="39.0" prefWidth="80.0" text="TU TURNO" />
+      <Label fx:id="labelRivalTurno" layoutX="638.0" layoutY="244.0" prefHeight="39.0" prefWidth="114.0" text="TURNO RIVAL" />
+      <Button fx:id="start" layoutX="519.0" layoutY="499.0" mnemonicParsing="false" onAction="#startBoton" prefHeight="39.0" prefWidth="114.0" text="Button" />
    </children>
 </AnchorPane>
