@@ -72,6 +72,52 @@ public class AppData {
         puntuacionRival = nuevaPuntuacionRival;
     }
 
+
+    public static int contarRepeticionesTotales(List<String> lista) {
+        int contador = 0;
+        for (int i = 0; i < lista.size(); i++) {
+            String elementoActual = lista.get(i);
+
+            if (!elementoActual.equals("-")) {
+                for (int j = i + 1; j < lista.size(); j++) {
+                    String otroElemento = lista.get(j);
+
+                    if (!otroElemento.equals("-") && elementoActual.equals(otroElemento)) {
+                        contador++;
+                    }
+                }
+            }
+        }
+        System.out.println("Se repite " + contador + " veces.");
+        return contador;
+    }
+
+    public static void modificarSinRepeticiones(List<String> lista) {
+        for (int i = 0; i < lista.size(); i++) {
+            String elementoActual = lista.get(i);
+
+            // Añadimos una condición para asegurarnos de que elementoActual no sea "-"
+            if (!elementoActual.equals("-")) {
+                boolean seRepite = false;
+
+                for (int j = i + 1; j < lista.size(); j++) {
+                    String otroElemento = lista.get(j);
+
+                    // Añadimos una condición para asegurarnos de que otroElemento no sea "-"
+                    if (!otroElemento.equals("-") && elementoActual.equals(otroElemento)) {
+                        seRepite = true;
+                        break;
+                    }
+                }
+
+                if (!seRepite) {
+                    // Si no se repite, modificamos la lista original para hacer que sea "-"
+                    lista.set(i, "-");
+                }
+            }
+        }
+    }
+
     private AppData() {
     }
 
@@ -172,8 +218,7 @@ public class AppData {
                 String miPuntuacion = String.valueOf(puntuacionMia);
 
                 board.remove(mySocketId);
-                System.out.println("board recibido");
-                System.out.println(board);
+              
 
                 layautcoenConnected.actualizarBoard(board);
                 

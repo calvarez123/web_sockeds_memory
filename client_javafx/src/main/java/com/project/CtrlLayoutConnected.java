@@ -181,14 +181,17 @@ public class CtrlLayoutConnected {
     public void startBoton(ActionEvent event) {
         System.out.println(infoData.tuTurno);
 
-        if(infoData.tuTurno==true){
+         if(infoData.tuTurno==true){
             labelMiTurno.setVisible(true);
-        }else if (infoData.tuTurno!=true) {
             labelRivalTurno.setVisible(false);
+        }else if (infoData.tuTurno!=true) {
+            labelRivalTurno.setVisible(true);
+            labelMiTurno.setVisible(false);
         }
         start.setVisible(false);
     }
 
+    int tiradas = 0;
     
     @FXML
     public void imgpressed(MouseEvent event) {
@@ -196,12 +199,12 @@ public class CtrlLayoutConnected {
         
         if(infoData.tuTurno==true){
             labelMiTurno.setVisible(true);
-        }else if (infoData.tuTurno!=true) {
             labelRivalTurno.setVisible(false);
+        }else if (infoData.tuTurno!=true) {
+            labelRivalTurno.setVisible(true);
+            labelMiTurno.setVisible(false);
         }
-
         
-
         if (infoData.tuTurno){        
             puntuacion2.setText(String.valueOf(infoData.getPuntuacionRival()));
         
@@ -239,14 +242,31 @@ public class CtrlLayoutConnected {
                 board.set(imageIndex, board_colors.get(imageIndex));
                 infoData.setBoard(board);
 
+                int cantidad = infoData.contarRepeticionesTotales(board);
+
+        
+                if (cantidad == infoData.getPuntuacionMia()+1){
+                    System.out.println("---has acertado una ams----");
+                    infoData.setPuntuacionMia(infoData.getPuntuacionMia()+1);
+                    puntuacion1.setText(String.valueOf(infoData.getPuntuacionMia()));
+                    tiradas=0;
+                }else{
+                    tiradas++;
+                };
+         
+                if (tiradas==2){
+                    infoData.MessegeBoard(board,infoData.getPuntuacionMia());
+                    System.out.println("board sin modificar-->"+board);
+                    infoData.modificarSinRepeticiones(board);
+                    System.out.println("board modificado-->"+board);
+                    infoData.setBoard(board);
+                    System.err.println(board);
+                    actualizarBoard(board);
+                    infoData.tuTurno=false;
+                };
+
                 
-
-
-
-
-                infoData.MessegeBoard(board,infoData.getPuntuacionMia()+1);
-                System.out.println("board enviado");
-                System.err.println(board);
+      
                 
                 
             } else {
@@ -254,12 +274,13 @@ public class CtrlLayoutConnected {
                 sourceimagen.setImage(imagenInicial);
                 board.set(imageIndex, "-");
 
+                System.out.println("entre qui");
+
                 infoData.setBoard(board);
-                infoData.MessegeBoard(board,infoData.getPuntuacionMia()+1);
-                System.out.println("board enviado");
-                System.err.println(board);
+                //infoData.MessegeBoard(board,infoData.getPuntuacionMia()+1);
+          
             }
-            System.out.println(board);
+          
     }else{
 
     }
@@ -300,7 +321,9 @@ public class CtrlLayoutConnected {
 
     public void actualizarBoard(List<String> nuevoBoard) {
            System.out.println(infoData.tuTurno);
+           System.out.println("nuevo board"+nuevoBoard);
             board = nuevoBoard;
+            System.out.println(board);
     
             // Actualiza las imágenes en las ImageView según el contenido del nuevo board
             for (int i = 0; i < imageViews.size() && i < board.size(); i++) {
@@ -344,8 +367,7 @@ public class CtrlLayoutConnected {
     
                 imageView.setImage(nuevaImagen);
             }
-    
-            System.out.println("Actualización del board en la interfaz gráfica");
+
         
     }
 
