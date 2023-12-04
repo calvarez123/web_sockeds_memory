@@ -238,55 +238,68 @@ public class CtrlLayoutConnected {
                     color = rosa;
                 }else if (board_colors.get(imageIndex).equals("verde")){
                     color = verde;
-                }
+                };
 
                 sourceimagen.setImage(color);
+
+            
+                    
                 board.set(imageIndex, board_colors.get(imageIndex));
                 infoData.setBoard(board);
+                infoData.MessegeBoard(board,infoData.getPuntuacionMia());
+             
                 
           
 
                 int cantidad = infoData.contarRepeticionesTotales(board);
 
-        
+                System.out.println(cantidad);
                 if (cantidad == infoData.getPuntuacionMia()+1){
                     System.out.println("---has acertado una ams----");
                     infoData.setPuntuacionMia(infoData.getPuntuacionMia()+1);
                     puntuacion1.setText(String.valueOf(infoData.getPuntuacionMia()));
                     tiradas=0;
-                    finalturno=false;
+                    finalturno = false;
                     System.out.println("acertado tiradas-->"+tiradas);
                 }else{
                     tiradas++;
                     finalturno =false;
                     System.out.println("fallo tiradas-->"+tiradas);
-                }
-         
-                if (tiradas>=3){
+                    if (tiradas==2){
+                    
+                    /*
+                    
+                     */
                     
                     System.out.println("fallo 2 tiradas-->"+tiradas);
                     
                     
-                    infoData.tuTurno=false;
+                    
                     finalturno = true;
                     
-                    infoData.modificarSinRepeticiones(board);
+                    
+                    board=infoData.modificarSinRepeticiones(board);
+                    System.out.println(board);
+
                     infoData.setBoard(board);
-                    actualizarBoard(board);
+                    infoData.tuTurno=false;
                     tiradas=0;
-                }else{
-                    System.err.println("envio el mensaje con mi turno "+finalturno);
-                    infoData.MessegeBoard(board,infoData.getPuntuacionMia(),finalturno);
+                   
 
-                }
-                System.err.println("envio el mensaje con mi turno "+finalturno);
-                infoData.MessegeBoard(board,infoData.getPuntuacionMia(),finalturno);
-                
+                    actualizarBoard(board);
+                    
+                    
+                    System.out.println("board que envio--->"+board);
+                    infoData.broadcastMessage("android");
+                    infoData.MessegeBoard(board,infoData.getPuntuacionMia());
+                    
 
+                };
                 
-      
+            }
                 
                 
+            
             } else {
                 // Si no es "-", cambia a la imagen inicial
                 sourceimagen.setImage(imagenInicial);
@@ -294,13 +307,12 @@ public class CtrlLayoutConnected {
 
                 System.out.println("entre qui");
 
-                infoData.setBoard(board);
-                infoData.MessegeBoard(board,infoData.getPuntuacionMia(),false);
-          
+                infoData.setBoard(board);          
             };
           
     }else{
-
+      System.out.println("entre en este else");
+  
     }
         
     }
@@ -338,14 +350,12 @@ public class CtrlLayoutConnected {
 
 
     public void actualizarBoard(List<String> nuevoBoard) {
-          
-            board = nuevoBoard;
         
     
             // Actualiza las imágenes en las ImageView según el contenido del nuevo board
-            for (int i = 0; i < imageViews.size() && i < board.size(); i++) {
+            for (int i = 0; i < imageViews.size() && i < nuevoBoard.size(); i++) {
                 ImageView imageView = imageViews.get(i);
-                String color = board.get(i);
+                String color = nuevoBoard.get(i);
     
                 // Lógica para asignar la imagen según el color o la imagen inicial si es "-"
                 Image nuevaImagen;

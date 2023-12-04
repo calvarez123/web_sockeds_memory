@@ -18,7 +18,9 @@ import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AppData {
 
@@ -92,31 +94,28 @@ public class AppData {
         return contador;
     }
 
-    public static void modificarSinRepeticiones(List<String> lista) {
+    public static List<String> modificarSinRepeticiones(List<String> lista)  {
+        Set<String> nombresRepetidos = new HashSet<>();
+        Set<String> nombresNoRepetidos = new HashSet<>();
+
+        for (String nombre : lista) {
+            if (!nombresNoRepetidos.add(nombre)) {
+                // Si el nombre ya está en nombresNoRepetidos, entonces es repetido
+                nombresRepetidos.add(nombre);
+            }
+        }
+
         for (int i = 0; i < lista.size(); i++) {
             String elementoActual = lista.get(i);
 
-            // Añadimos una condición para asegurarnos de que elementoActual no sea "-"
-            if (!elementoActual.equals("-")) {
-                boolean seRepite = false;
-
-                for (int j = i + 1; j < lista.size(); j++) {
-                    String otroElemento = lista.get(j);
-
-                    // Añadimos una condición para asegurarnos de que otroElemento no sea "-"
-                    if (!otroElemento.equals("-") && elementoActual.equals(otroElemento)) {
-                        seRepite = true;
-                        break;
-                    }
-                }
-
-                if (!seRepite) {
-                    // Si no se repite, modificamos la lista original para hacer que sea "-"
-                    lista.set(i, "-");
-                }
+            if (!nombresRepetidos.contains(elementoActual)) {
+                // Si el elemento no está en nombresRepetidos, se reemplaza con '-'
+                lista.set(i, "-");
             }
         }
+        return lista;
     }
+    
 
     private AppData() {
     }
@@ -202,6 +201,17 @@ public class AppData {
 
         String type = data.getString("type");
         switch (type) {
+            case "tetoca":
+                String from = data.getString("value");
+                System.out.println(from);
+                if (from.equals("flutter")){
+                    tuTurno = true;
+                    System.out.println("lo recibi");
+                }
+                
+                
+                
+                break;
             case "turno":
                 tuTurno = true;
                 System.out.println("lo recibi");
@@ -212,21 +222,16 @@ public class AppData {
                 board.clear();
                 data.getJSONArray("list").forEach(item -> board.add(item.toString()));
                 setPuntuacionRival(data.getInt("puntuacion"));
-                boolean finTurnoRival = data.getBoolean("finturno");
 
-                if (finTurnoRival==true){
-                    tuTurno = true;
-                }else{
-                    tuTurno= false;
-                }
+                System.out.println("board recibido--->"+board);
 
-                
+      
 
                 String miPuntuacion = String.valueOf(puntuacionMia);
 
                 board.remove(mySocketId);
               
-
+                System.out.println(board);
                 layautcoenConnected.actualizarBoard(board);
                 
             
@@ -346,16 +351,15 @@ public class AppData {
 
     public void broadcastMessage(String msg) {
         JSONObject message = new JSONObject();
-        message.put("type", "broadcast");
+        message.put("type", "finturno");
         message.put("value", msg);
         socketClient.send(message.toString());
     }
-    public void MessegeBoard(List<String> msg,int puntuacion,boolean finTurno) {
+    public void MessegeBoard(List<String> msg,int puntuacion) {
         JSONObject message = new JSONObject();
         message.put("type", "board");
         message.put("from", "cliente");
         message.put("puntuacion", puntuacion);
-        message.put("finturno", finTurno);
         message.put("value", msg);
         socketClient.send(message.toString());
     }
