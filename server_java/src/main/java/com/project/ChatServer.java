@@ -131,15 +131,20 @@ public class ChatServer extends WebSocketServer {
             if (type.equalsIgnoreCase("board")) {
                 JSONArray jsonArray = objRequest.getJSONArray("value");
                 int puntuacionRival = objRequest.getInt("puntuacion");
+                boolean finTurnoRival = objRequest.getBoolean("finturno");
                 System.out.println(puntuacionRival);
                 List<String> Actualizadoboard = convertirJSONArrayALista(jsonArray);
                 setBoard(Actualizadoboard);
 
+             
+
                 JSONObject objResponse = new JSONObject("{}");
                 objResponse.put("type", "board");
                 objResponse.put("puntuacion", puntuacionRival);
+                objResponse.put("finturno", finTurnoRival);
                 objResponse.put("list", getBoard());
                 broadcast(objResponse.toString()); 
+                
                 
             
             }

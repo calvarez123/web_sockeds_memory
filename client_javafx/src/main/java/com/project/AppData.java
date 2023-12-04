@@ -212,6 +212,13 @@ public class AppData {
                 board.clear();
                 data.getJSONArray("list").forEach(item -> board.add(item.toString()));
                 setPuntuacionRival(data.getInt("puntuacion"));
+                boolean finTurnoRival = data.getBoolean("finturno");
+
+                if (finTurnoRival==true){
+                    tuTurno = true;
+                }else{
+                    tuTurno= false;
+                }
 
                 
 
@@ -343,11 +350,12 @@ public class AppData {
         message.put("value", msg);
         socketClient.send(message.toString());
     }
-    public void MessegeBoard(List<String> msg,int puntuacion) {
+    public void MessegeBoard(List<String> msg,int puntuacion,boolean finTurno) {
         JSONObject message = new JSONObject();
         message.put("type", "board");
         message.put("from", "cliente");
         message.put("puntuacion", puntuacion);
+        message.put("finturno", finTurno);
         message.put("value", msg);
         socketClient.send(message.toString());
     }

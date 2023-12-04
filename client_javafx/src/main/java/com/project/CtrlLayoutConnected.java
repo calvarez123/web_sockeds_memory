@@ -204,6 +204,8 @@ public class CtrlLayoutConnected {
             labelRivalTurno.setVisible(true);
             labelMiTurno.setVisible(false);
         }
+
+        boolean finalturno = false;
         
         if (infoData.tuTurno){        
             puntuacion2.setText(String.valueOf(infoData.getPuntuacionRival()));
@@ -241,6 +243,8 @@ public class CtrlLayoutConnected {
                 sourceimagen.setImage(color);
                 board.set(imageIndex, board_colors.get(imageIndex));
                 infoData.setBoard(board);
+                
+          
 
                 int cantidad = infoData.contarRepeticionesTotales(board);
 
@@ -250,20 +254,34 @@ public class CtrlLayoutConnected {
                     infoData.setPuntuacionMia(infoData.getPuntuacionMia()+1);
                     puntuacion1.setText(String.valueOf(infoData.getPuntuacionMia()));
                     tiradas=0;
+                    finalturno=false;
+                    System.out.println("acertado tiradas-->"+tiradas);
                 }else{
                     tiradas++;
-                };
+                    finalturno =false;
+                    System.out.println("fallo tiradas-->"+tiradas);
+                }
          
-                if (tiradas==2){
-                    infoData.MessegeBoard(board,infoData.getPuntuacionMia());
-                    System.out.println("board sin modificar-->"+board);
-                    infoData.modificarSinRepeticiones(board);
-                    System.out.println("board modificado-->"+board);
-                    infoData.setBoard(board);
-                    System.err.println(board);
-                    actualizarBoard(board);
+                if (tiradas>=3){
+                    
+                    System.out.println("fallo 2 tiradas-->"+tiradas);
+                    
+                    
                     infoData.tuTurno=false;
-                };
+                    finalturno = true;
+                    
+                    infoData.modificarSinRepeticiones(board);
+                    infoData.setBoard(board);
+                    actualizarBoard(board);
+                    tiradas=0;
+                }else{
+                    System.err.println("envio el mensaje con mi turno "+finalturno);
+                    infoData.MessegeBoard(board,infoData.getPuntuacionMia(),finalturno);
+
+                }
+                System.err.println("envio el mensaje con mi turno "+finalturno);
+                infoData.MessegeBoard(board,infoData.getPuntuacionMia(),finalturno);
+                
 
                 
       
@@ -277,9 +295,9 @@ public class CtrlLayoutConnected {
                 System.out.println("entre qui");
 
                 infoData.setBoard(board);
-                //infoData.MessegeBoard(board,infoData.getPuntuacionMia()+1);
+                infoData.MessegeBoard(board,infoData.getPuntuacionMia(),false);
           
-            }
+            };
           
     }else{
 
@@ -320,10 +338,9 @@ public class CtrlLayoutConnected {
 
 
     public void actualizarBoard(List<String> nuevoBoard) {
-           System.out.println(infoData.tuTurno);
-           System.out.println("nuevo board"+nuevoBoard);
+          
             board = nuevoBoard;
-            System.out.println(board);
+        
     
             // Actualiza las imágenes en las ImageView según el contenido del nuevo board
             for (int i = 0; i < imageViews.size() && i < board.size(); i++) {
