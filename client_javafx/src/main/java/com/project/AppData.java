@@ -44,7 +44,7 @@ public class AppData {
 
     private List<String> board_colors = new ArrayList<>();
 
-    private List<String> board = new ArrayList<>();
+    List<String> board = new ArrayList<>();
 
 
     public enum ConnectionStatus {
@@ -221,6 +221,7 @@ public class AppData {
                 CtrlLayoutConnected layautcoenConnected = new CtrlLayoutConnected();
                 board.clear();
                 data.getJSONArray("list").forEach(item -> board.add(item.toString()));
+           
                 setPuntuacionRival(data.getInt("puntuacion"));
 
                 System.out.println("board recibido--->"+board);
@@ -229,10 +230,9 @@ public class AppData {
 
                 String miPuntuacion = String.valueOf(puntuacionMia);
 
-                board.remove(mySocketId);
               
                 System.out.println(board);
-                layautcoenConnected.actualizarBoard(board);
+                layautcoenConnected.actualizarBoard(board,true);
                 
             
                 

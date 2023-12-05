@@ -86,7 +86,6 @@ public class CtrlLayoutConnected {
     
     List<String> board_colors = infoData.getBoard_colors();
 
-    static List<String> board = new ArrayList<>(Arrays.asList("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"));
 
     Random random = new Random();
 
@@ -220,7 +219,7 @@ public class CtrlLayoutConnected {
             // Verifica el contenido del tablero en esa posición
 
             // rojo,negro,amarillo,blanco,gris,naranja,rosa,verde
-            if (board.get(imageIndex).equals("-")) {
+            if (infoData.board.get(imageIndex).equals("-")) {
                 // Si es "-", cambia a rojo
                 if (board_colors.get(imageIndex).equals("rojo")){
                     color = rojo;
@@ -243,15 +242,17 @@ public class CtrlLayoutConnected {
                 sourceimagen.setImage(color);
 
             
-                    
-                board.set(imageIndex, board_colors.get(imageIndex));
-                infoData.setBoard(board);
-                infoData.MessegeBoard(board,infoData.getPuntuacionMia());
+                System.out.println("board antes del set"+infoData.board);
+                infoData.board.set(imageIndex, board_colors.get(imageIndex));
+                infoData.setBoard(infoData.board);
+
+                System.out.println("despues del click "+infoData.board);
+                infoData.MessegeBoard(infoData.board,infoData.getPuntuacionMia());
              
                 
           
 
-                int cantidad = infoData.contarRepeticionesTotales(board);
+                int cantidad = infoData.contarRepeticionesTotales(infoData.board);
 
                 System.out.println(cantidad);
                 if (cantidad == infoData.getPuntuacionMia()+1){
@@ -278,20 +279,20 @@ public class CtrlLayoutConnected {
                     finalturno = true;
                     
                     
-                    board=infoData.modificarSinRepeticiones(board);
-                    System.out.println(board);
+                    infoData.board=infoData.modificarSinRepeticiones(infoData.board);
+                    System.out.println(infoData.board);
 
-                    infoData.setBoard(board);
+                    infoData.setBoard(infoData.board);
                     infoData.tuTurno=false;
                     tiradas=0;
                    
 
-                    actualizarBoard(board);
+                    actualizarBoard(infoData.board,false);
                     
                     
-                    System.out.println("board que envio--->"+board);
+                    System.out.println("board que envio--->"+infoData.board);
                     infoData.broadcastMessage("android");
-                    infoData.MessegeBoard(board,infoData.getPuntuacionMia());
+                    infoData.MessegeBoard(infoData.board,infoData.getPuntuacionMia());
                     
 
                 };
@@ -303,11 +304,11 @@ public class CtrlLayoutConnected {
             } else {
                 // Si no es "-", cambia a la imagen inicial
                 sourceimagen.setImage(imagenInicial);
-                board.set(imageIndex, "-");
+                infoData.board.set(imageIndex, "-");
 
                 System.out.println("entre qui");
 
-                infoData.setBoard(board);          
+                infoData.setBoard(infoData.board);          
             };
           
     }else{
@@ -349,9 +350,10 @@ public class CtrlLayoutConnected {
     }
 
 
-    public void actualizarBoard(List<String> nuevoBoard) {
-        
-    
+    public void actualizarBoard(List<String> nuevoBoard,boolean mio) {
+            if (mio!=true){
+                
+            }
             // Actualiza las imágenes en las ImageView según el contenido del nuevo board
             for (int i = 0; i < imageViews.size() && i < nuevoBoard.size(); i++) {
                 ImageView imageView = imageViews.get(i);
