@@ -1,9 +1,8 @@
 package com.project;
 
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.project.AppData.ConnectionStatus;
 import com.project.AppSocketsClient.OnCloseObject;
 
 import javafx.animation.PauseTransition;
@@ -17,10 +16,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class AppData {
 
@@ -30,92 +30,20 @@ public class AppData {
     private String port = "8888";
     private ConnectionStatus connectionStatus = ConnectionStatus.DISCONNECTED;
     private String mySocketId;
-    private List<String> clients = new ArrayList<>();
-    private String selectedClient = "";
-    private Integer selectedClientIndex;
-    private StringBuilder messages = new StringBuilder();
+    private Map<String, Integer> localConnectedClients = new HashMap<>();
 
-    private int puntuacionMia = 0;
-    private int puntuacionRival = 0;
+    CtrlLayoutConnected layautcoenConnected = new CtrlLayoutConnected();
+    String playerName = "";
+    String otroJugador = "No hay nadie";
 
-    boolean tuTurno;
+    boolean tuTurno = false;
 
-    int aciertos = 0;
-
-    private List<String> board_colors = new ArrayList<>();
-
-    List<String> board = new ArrayList<>();
-
+    static List<String> board = new ArrayList<>(
+            Arrays.asList("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"));
 
     public enum ConnectionStatus {
         DISCONNECTED, DISCONNECTING, CONNECTING, CONNECTED
     }
-    public int getPuntuacionMia() {
-        return puntuacionMia;
-    }
-
-    public int getAciertos() {
-        return aciertos;
-    }
-
-    public void setAciertos(int aciertos) {
-        this.aciertos = aciertos;
-    }
-
-    public  void setPuntuacionMia(int nuevaPuntuacionMia) {
-        puntuacionMia = nuevaPuntuacionMia;
-    }
-
-    public  int getPuntuacionRival() {
-        return puntuacionRival;
-    }
-
-    public  void setPuntuacionRival(int nuevaPuntuacionRival) {
-        puntuacionRival = nuevaPuntuacionRival;
-    }
-
-
-    public static int contarRepeticionesTotales(List<String> lista) {
-        int contador = 0;
-        for (int i = 0; i < lista.size(); i++) {
-            String elementoActual = lista.get(i);
-
-            if (!elementoActual.equals("-")) {
-                for (int j = i + 1; j < lista.size(); j++) {
-                    String otroElemento = lista.get(j);
-
-                    if (!otroElemento.equals("-") && elementoActual.equals(otroElemento)) {
-                        contador++;
-                    }
-                }
-            }
-        }
-        System.out.println("Se repite " + contador + " veces.");
-        return contador;
-    }
-
-    public static List<String> modificarSinRepeticiones(List<String> lista)  {
-        Set<String> nombresRepetidos = new HashSet<>();
-        Set<String> nombresNoRepetidos = new HashSet<>();
-
-        for (String nombre : lista) {
-            if (!nombresNoRepetidos.add(nombre)) {
-                // Si el nombre ya está en nombresNoRepetidos, entonces es repetido
-                nombresRepetidos.add(nombre);
-            }
-        }
-
-        for (int i = 0; i < lista.size(); i++) {
-            String elementoActual = lista.get(i);
-
-            if (!nombresRepetidos.contains(elementoActual)) {
-                // Si el elemento no está en nombresRepetidos, se reemplaza con '-'
-                lista.set(i, "-");
-            }
-        }
-        return lista;
-    }
-    
 
     private AppData() {
     }
@@ -125,7 +53,7 @@ public class AppData {
     }
 
     public String getLocalIPAddress() throws SocketException, UnknownHostException {
-        
+
         String localIp = "";
         Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
         while (networkInterfaces.hasMoreElements()) {
@@ -136,7 +64,6 @@ public class AppData {
                 if (!ia.isLinkLocalAddress() && !ia.isLoopbackAddress() && ia.isSiteLocalAddress()) {
                     System.out.println(ni.getDisplayName() + ": " + ia.getHostAddress());
                     localIp = ia.getHostAddress();
-                    // Si hi ha múltiples direccions IP, es queda amb la última
                 }
             }
         }
@@ -153,11 +80,18 @@ public class AppData {
             URI location = new URI("ws://" + ip + ":" + port);
             socketClient = new AppSocketsClient(
                     location,
-                    (ServerHandshake handshake) ->  { this.onOpen(handshake);},
-                    (String message) ->             { this.onMessage(message); },
-                    (OnCloseObject closeInfo) ->    { this.onClose(closeInfo); },
-                    (Exception ex) ->               { this.onError(ex); }
-            );
+                    (ServerHandshake handshake) -> {
+                        this.onOpen(handshake);
+                    },
+                    (String message) -> {
+                        this.onMessage(message);
+                    },
+                    (OnCloseObject closeInfo) -> {
+                        this.onClose(closeInfo);
+                    },
+                    (Exception ex) -> {
+                        this.onError(ex);
+                    });
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -167,8 +101,6 @@ public class AppData {
         PauseTransition pause = new PauseTransition(Duration.seconds(1));
         pause.setOnFinished(event -> {
             if (connectionStatus == ConnectionStatus.CONNECTED) {
-                CtrlLayoutConnected ctrlConnected = (CtrlLayoutConnected) UtilsViews.getController("Connected");
-                ctrlConnected.updateInfo();
                 UtilsViews.setViewAnimating("Connected");
             } else {
                 UtilsViews.setViewAnimating("Disconnected");
@@ -187,9 +119,21 @@ public class AppData {
         pause.play();
     }
 
-    private void onOpen (ServerHandshake handshake) {
+    public void setLayoutConnected(CtrlLayoutConnected layoutConnected) {
+        this.layautcoenConnected = layoutConnected;
+    }
+
+    private void onOpen(ServerHandshake handshake) {
         System.out.println("Handshake: " + handshake.getHttpStatusMessage());
-        connectionStatus = ConnectionStatus.CONNECTED; 
+        connectionStatus = ConnectionStatus.CONNECTED;
+        JSONObject message = new JSONObject();
+        try {
+            message.put("type", "playerName");
+            message.put("name", playerName);
+            socketClient.send(message.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void onMessage(String message) {
@@ -201,87 +145,58 @@ public class AppData {
 
         String type = data.getString("type");
         switch (type) {
-            case "tetoca":
-                String from = data.getString("value");
-                System.out.println(from);
-                if (from.equals("flutter")){
+            case "turno":
+                if (data.getString("clienteTurno").equalsIgnoreCase(playerName)) {
                     tuTurno = true;
                     System.out.println("lo recibi");
                 }
-                
-                
-                
-                break;
-            case "turno":
-                tuTurno = true;
-                System.out.println("lo recibi");
-                
+                Platform.runLater(() -> layautcoenConnected.actualizarTurno());
                 break;
             case "board":
-                CtrlLayoutConnected layautcoenConnected = new CtrlLayoutConnected();
+                tuTurno = data.getString("turno").equalsIgnoreCase(playerName);
                 board.clear();
                 data.getJSONArray("list").forEach(item -> board.add(item.toString()));
-           
-                setPuntuacionRival(data.getInt("puntuacion"));
+                JSONObject listaa = data.getJSONObject("lista");
+                Map<String, Integer> updatedClientss = new HashMap<>();
+                for (String key : listaa.keySet()) {
+                    if (!key.equalsIgnoreCase(playerName)) {
+                        otroJugador = key;
+                    }
+                    updatedClientss.put(key, listaa.getInt(key));
 
-                System.out.println("board recibido--->"+board);
+                }
+                if (layautcoenConnected != null) {
+                    Platform.runLater(() -> layautcoenConnected.actualizarLabelTurno(
+                            String.valueOf(updatedClientss.get(playerName)),
+                            String.valueOf(updatedClientss.get(otroJugador))));
+                    Platform.runLater(() -> layautcoenConnected.actualizarBoard(board));
+                }
 
-      
-
-                String miPuntuacion = String.valueOf(puntuacionMia);
-
-              
-                System.out.println(board);
-                layautcoenConnected.actualizarBoard(board,true);
-                
-            
-                
-                break;
-            
-            case "list":
-                board_colors.clear();
-                System.out.println("mueve este");
-                data.getJSONArray("list").forEach(item -> board_colors.add(item.toString()));
-                board_colors.remove(mySocketId);
-                
                 break;
             case "id":
                 mySocketId = data.getString("value");
-                messages.append("Id received: ").append(data.getString("value")).append("\n");
                 break;
-            case "connected":
-                clients.add(data.getString("id"));
-                clients.remove(mySocketId);
-                messages.append("Connected client: ").append(data.getString("id")).append("\n");
-                updateClientList();
-                break;
-            case "disconnected":
-                String removeId = data.getString("id");
-                if (selectedClient.equals(removeId)) {
-                    selectedClient = "";
+            case "lista":
+                JSONObject lista = data.getJSONObject("lista");
+                Map<String, Integer> updatedClients = new HashMap<>();
+                for (String key : lista.keySet()) {
+                    updatedClients.put(key, lista.getInt(key));
                 }
-                clients.remove(data.getString("id"));
-                messages.append("Disconnected client: ").append(data.getString("id")).append("\n");
-                updateClientList();
-                break;
-            case "private":
-                messages.append("Private message from '")
-                        .append(data.getString("from"))
-                        .append("': ")
-                        .append(data.getString("value"))
-                        .append("\n");
+                localConnectedClients.clear();
+                localConnectedClients.putAll(updatedClients);
+
+                for (String key : localConnectedClients.keySet()) {
+                    if (!key.equalsIgnoreCase(playerName)) {
+                        otroJugador = key;
+                    }
+                }
+                Platform.runLater(() -> layautcoenConnected.actualizarNombresyPuntuacion(playerName,
+                        "0", otroJugador,
+                        "0"));
+
                 break;
             default:
-                messages.append("Message from '")
-                        .append(data.getString("from"))
-                        .append("': ")
-                        .append(data.getString("value"))
-                        .append("\n");
                 break;
-        }
-        if (connectionStatus == ConnectionStatus.CONNECTED) {
-            CtrlLayoutConnected ctrlConnected = (CtrlLayoutConnected) UtilsViews.getController("Connected");
-            ctrlConnected.updateMessages(messages.toString());        
         }
     }
 
@@ -294,82 +209,15 @@ public class AppData {
         System.out.println("Error: " + ex.getMessage());
     }
 
-    public void refreshClientsList() {
-        JSONObject message = new JSONObject();
-        message.put("type", "list");
-        socketClient.send(message.toString());
+    public void on(String ex) {
+        System.out.println("Error: " + ex);
     }
 
-    public void updateClientList() {
-        if (connectionStatus == ConnectionStatus.CONNECTED) {
-            CtrlLayoutConnected ctrlConnected = (CtrlLayoutConnected) UtilsViews.getController("Connected");
-            ctrlConnected.updateClientList(clients);
-        }
-    }
-    
-
-    public void selectClient(int index) {
-        if (selectedClientIndex == null || selectedClientIndex != index) {
-            selectedClientIndex = index;
-            selectedClient = clients.get(index);
-        } else {
-            selectedClientIndex = null;
-            selectedClient = "";
-        }
-    }
-
-    public Integer getSelectedClientIndex() {
-        return selectedClientIndex;
-    }
-
-    public void send(String msg) {
-        if (selectedClientIndex == null) {
-            broadcastMessage(msg);
-        } else {
-            privateMessage(msg);
-        }
-    }
-
-
-
-    public List<String> getBoard_colors() {
-        return this.board_colors;
-    }
-
-    public void setBoard_colors(List<String> board_colors) {
-        this.board_colors = board_colors;
-    }
-
-    public List<String> getBoard() {
-        return this.board_colors;
-    }
-
-    public void setBoard(List<String> board_colors) {
-        this.board_colors = board_colors;
-    }
-    
-
-    public void broadcastMessage(String msg) {
-        JSONObject message = new JSONObject();
-        message.put("type", "finturno");
-        message.put("value", msg);
-        socketClient.send(message.toString());
-    }
-    public void MessegeBoard(List<String> msg,int puntuacion) {
+    public void MessegeBoard(int msg) {
         JSONObject message = new JSONObject();
         message.put("type", "board");
-        message.put("from", "cliente");
-        message.put("puntuacion", puntuacion);
+        message.put("from", playerName);
         message.put("value", msg);
-        socketClient.send(message.toString());
-    }
-
-    public void privateMessage(String msg) {
-        if (selectedClient.isEmpty()) return;
-        JSONObject message = new JSONObject();
-        message.put("type", "private");
-        message.put("value", msg);
-        message.put("destination", selectedClient);
         socketClient.send(message.toString());
     }
 
@@ -377,19 +225,23 @@ public class AppData {
         return ip;
     }
 
-    public String setIp (String ip) {
+    public String setIp(String ip) {
         return this.ip = ip;
+    }
+
+    public String setPlayerName(String name) {
+        return this.playerName = name;
     }
 
     public String getPort() {
         return port;
     }
 
-    public String setPort (String port) {
+    public String setPort(String port) {
         return this.port = port;
     }
 
-    public String getMySocketId () {
+    public String getMySocketId() {
         return mySocketId;
     }
 }

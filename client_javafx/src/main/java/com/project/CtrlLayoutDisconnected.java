@@ -22,6 +22,9 @@ public class CtrlLayoutDisconnected {
     @FXML
     private TextField portTextField;
 
+    @FXML
+    private TextField nameTextField;
+
     private AppData appData;
 
     Rectangle rect = new Rectangle();
@@ -50,6 +53,7 @@ public class CtrlLayoutDisconnected {
     private void connectToServer() {
         appData.setIp(ipTextField.getText());
         appData.setPort(portTextField.getText());
+        appData.setPlayerName(nameTextField.getText());
         appData.connectToServer();
 
     }
@@ -64,7 +68,7 @@ public class CtrlLayoutDisconnected {
         rect.setWidth(50.0);
         rect.setHeight(50.0);
         rect.setStroke(Color.rgb(100, 100, 100, 1.0));
-        rect.setStrokeWidth(2.0);  // Establir el gruix del contorn a 2 px
+        rect.setStrokeWidth(2.0); // Establir el gruix del contorn a 2 px
         rect.setFill(null); // No emplenar l'interior del rectangle
 
         AnchorPane.setLeftAnchor(rect, 50.0);
@@ -73,7 +77,7 @@ public class CtrlLayoutDisconnected {
 
         // Crear el cercle
         circle.setCenterX(0.0f);
-        circle.setRadius(25.0); 
+        circle.setRadius(25.0);
         circle.setFill(Color.BLUE);
 
         AnchorPane.setLeftAnchor(circle, 50.0);

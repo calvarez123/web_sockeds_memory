@@ -7,7 +7,13 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -18,13 +24,22 @@ import org.json.JSONObject;
 public class ChatServer extends WebSocketServer {
 
     static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-    List<String> board_colors = new ArrayList<>((Arrays.asList("rojo", "negro", "amarillo", "azul", "gris", "naranja", "rosa", "verde","rojo", "negro", "amarillo", "azul", "gris", "naranja", "rosa", "verde")));
-    List<String> board = new ArrayList<>(Arrays.asList("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"));
-    private static final List<String> connectedClients = new ArrayList<>();
-    private static int turnoActual = 0;
+    static List<String> board_colors = new ArrayList<>(
+            (Arrays.asList("rojo", "negro", "amarillo", "azul", "gris", "naranja",
+                    "rosa", "verde", "rojo", "negro", "amarillo", "azul", "gris", "naranja", "rosa", "verde")));
 
+    static List<String> board = new ArrayList<>(
+            Arrays.asList("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"));
 
-    public ChatServer (int port) {
+    private static final Map<String, Integer> connectedClients = new HashMap<>();
+    private Map<WebSocket, String> connectionPlayerMap = new HashMap<>();
+    private int posi1;
+    private int posi2;
+    private static int tiradas = 1;
+    private static String color1, color2;
+    private static boolean iguales;
+
+    public ChatServer(int port) {
         super(new InetSocketAddress(port));
     }
 
@@ -50,221 +65,173 @@ public class ChatServer extends WebSocketServer {
         objWlc.put("type", "private");
         objWlc.put("from", "server");
         objWlc.put("value", "Welcome to the chat server");
-        conn.send(objWlc.toString()); 
-        
+        conn.send(objWlc.toString());
 
         // Li enviem el seu identificador
         JSONObject objId = new JSONObject("{}");
         objId.put("type", "id");
         objId.put("from", "server");
         objId.put("value", clientId);
-        conn.send(objId.toString()); 
+        conn.send(objId.toString());
 
-        // Enviem al client la llista amb tots els clients connectats
-        sendList(conn);
-
-        // Enviem la direcció URI del nou client a tothom 
+        // Enviem la direcció URI del nou client a tothom
         JSONObject objCln = new JSONObject("{}");
         objCln.put("type", "connected");
         objCln.put("from", "server");
         objCln.put("id", clientId);
         broadcast(objCln.toString());
 
-        //ENVIAR LA LISTA A TODOS LOS CLIENTES
+        // ENVIAR LA LISTA A TODOS LOS CLIENTES
         JSONObject objResponse = new JSONObject("{}");
         objResponse.put("type", "list");
         objResponse.put("from", "server");
         objResponse.put("list", board_colors);
-        conn.send(objResponse.toString()); 
+        conn.send(objResponse.toString());
 
         // Mostrem per pantalla (servidor) la nova connexió
         String host = conn.getRemoteSocketAddress().getAddress().getHostAddress();
         System.out.println("New client (" + clientId + "): " + host);
 
-        connectedClients.add(getConnectionId(conn));
-        if (connectedClients.size() == 1) {
-            System.err.println("ennviado");
-            // Es el primer cliente, comienza el turno
-            enviarTurno(conn);
-        }
-    }
-
-    private void enviarTurno(WebSocket conn) {
-        // Obtener el cliente actual para el turno
-        String clienteTurno = connectedClients.get(turnoActual);
-    
-        // Enviar mensaje al cliente actual indicando que es su turno
-        JSONObject objTurno = new JSONObject("{}");
-        objTurno.put("type", "turno");
-        objTurno.put("from", "server");
-        objTurno.put("clienteTurno", clienteTurno);
-        conn.send(objTurno.toString());
-    
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        // Quan un client es desconnecta
         String clientId = getConnectionId(conn);
-
-        // Informem a tothom que el client s'ha desconnectat
-        JSONObject objCln = new JSONObject("{}");
-        objCln.put("type", "disconnected");
-        objCln.put("from", "server");
-        objCln.put("id", clientId);
-        broadcast(objCln.toString());
-
-        // Mostrem per pantalla (servidor) la desconnexió
+        connectedClients.remove(connectionPlayerMap.get(conn));
+        connectionPlayerMap.remove(conn);
         System.out.println("Client disconnected '" + clientId + "'");
-
-        connectedClients.clear();
+        if (connectedClients.size() == 0) {
+            System.out.println("entroooooo");
+            for (int i = 0; i < board.size(); i++) {
+                board.set(i, "-");
+            }
+        }
+        System.out.println(board);
     }
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        // Quan arriba un missatge
-        String clientId = getConnectionId(conn);
         try {
             JSONObject objRequest = new JSONObject(message);
             String type = objRequest.getString("type");
-
             if (type.equalsIgnoreCase("board")) {
-                JSONArray jsonArray = objRequest.getJSONArray("value");
-                int puntuacionRival = objRequest.getInt("puntuacion");
-               
-                System.out.println(puntuacionRival);
-                List<String> Actualizadoboard = convertirJSONArrayALista(jsonArray);
-                setBoard(Actualizadoboard);
+                String nombre = objRequest.getString("from");
+                if (tiradas == 1) {
+                    posi1 = objRequest.getInt("value");
+                    color1 = cogerColor(posi1);
+                    JSONObject objResponse = new JSONObject("{}");
+                    objResponse.put("type", "board");
+                    objResponse.put("lista", connectedClients);
+                    objResponse.put("list", board);
+                    objResponse.put("turno", nombre);
+                    broadcast(objResponse.toString());
+                } else if (tiradas == 2) {
+                    posi2 = objRequest.getInt("value");
+                    color2 = cogerColor(posi2);
+                    JSONObject objResponse1 = new JSONObject("{}");
+                    objResponse1.put("type", "board");
+                    objResponse1.put("lista", connectedClients);
+                    objResponse1.put("list", board);
+                    objResponse1.put("turno", nombre);
+                    broadcast(objResponse1.toString());
+                    iguales = coloresIguales(color1, color2);
+                    if (iguales) {
+                        tiradas = 1;
+                        connectedClients.put(nombre, connectedClients.get(nombre) + 1);
+                        JSONObject objResponse2 = new JSONObject("{}");
+                        objResponse2.put("type", "board");
+                        objResponse2.put("lista", connectedClients);
+                        objResponse2.put("list", board);
+                        objResponse2.put("turno", nombre);
+                        broadcast(objResponse2.toString());
+                    } else {
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                tiradas = 1;
+                                String otroNombre = "";
+                                for (Map.Entry<String, Integer> entry : connectedClients.entrySet()) {
+                                    if (!entry.getKey().equalsIgnoreCase(nombre)) {
+                                        otroNombre = entry.getKey();
+                                        break;
+                                    }
+                                }
+                                JSONObject objResponse3 = new JSONObject("{}");
+                                objResponse3.put("type", "board");
+                                objResponse3.put("turno", otroNombre);
+                                objResponse3.put("lista", connectedClients);
+                                objResponse3.put("list", board);
+                                broadcast(objResponse3.toString());
+                            }
+                        }, 1500);
+                    }
 
-             
-
-                JSONObject objResponse = new JSONObject("{}");
-                objResponse.put("type", "board");
-                objResponse.put("puntuacion", puntuacionRival);
-
-                objResponse.put("list", getBoard());
-                broadcast(objResponse.toString()); 
-                
-                
-            
-            }if (type.equalsIgnoreCase("finturno")) {
-                String puntuacionRival = objRequest.getString("value");
-                JSONObject objResponse = new JSONObject("{}");
-                objResponse.put("type", "tetoca");
-                objResponse.put("value", puntuacionRival);
-                System.err.println("envio el mensaje de "+puntuacionRival);
-
-                broadcast(objResponse.toString()); 
-
-            }
-            if (type.equalsIgnoreCase("list")) {
-                // El client demana la llista de tots els clients
-                System.out.println("Client '" + clientId + "'' requests list of clients");
-                sendList(conn);
-
-            } else if (type.equalsIgnoreCase("private")) {
-                // El client envia un missatge privat a un altre client
-                System.out.println("Client '" + clientId + "'' sends a private message");
-
-                JSONObject objResponse = new JSONObject("{}");
-                objResponse.put("type", "private");
-                objResponse.put("from", clientId);
-                objResponse.put("value", objRequest.getString("value"));
-
-                String destination = objRequest.getString("destination");
-                WebSocket desti = getClientById(destination);
-
-                if (desti != null) {
-                    desti.send(objResponse.toString()); 
                 }
-                
-            } else if (type.equalsIgnoreCase("broadcast")) {
-                // El client envia un missatge a tots els clients
-                System.out.println("Client '" + clientId + "'' sends a broadcast message to everyone");
-             
+
+            } else if (type.equalsIgnoreCase("playerName")) {
+                connectionPlayerMap.put(conn, objRequest.getString("name"));
+                System.out.println( objRequest.getString("name"));
+                connectedClients.put(objRequest.getString("name"), 0);
+                if (connectedClients.size() == 1) {
+                    JSONObject objTurno = new JSONObject("{}");
+                    objTurno.put("type", "turno");
+                    objTurno.put("clienteTurno", objRequest.getString("name"));
+                    broadcast(objTurno.toString());
+                } else {
+                    JSONObject objTurno = new JSONObject("{}");
+                    objTurno.put("type", "turno");
+                    objTurno.put("clienteTurno", "");
+                    broadcast(objTurno.toString());
+                }
+                JSONObject objResponse = new JSONObject("{}");
+                objResponse.put("type", "lista");
+                objResponse.put("lista", connectedClients);
+                broadcast(objResponse.toString());
+
             }
 
-        } catch (Exception e) {
+        } catch (
+
+        Exception e) {
             e.printStackTrace();
         }
     }
 
-    /*JSONObject objResponse = new JSONObject("{}");
-                objResponse.put("type", "broadcast");
-                objResponse.put("list", getBoard());
-                broadcast(objResponse.toString()); */
-
-    @Override
-    public void onError(WebSocket conn, Exception ex) {
-        // Quan hi ha un error
-        ex.printStackTrace();
+    public static String cogerColor(int posicion) {
+        String color = board_colors.get(posicion);
+        board.set(posicion, color);
+        tiradas = tiradas + 1;
+        return color;
     }
 
-    public void runServerBucle () {
-        boolean running = true;
-        try {
-            System.out.println("Starting server");
-            start();
-            while (running) {
-                String line;
-                line = in.readLine();
-                if (line.equals("exit")) {
-                    running = false;
-                }
-            } 
-            System.out.println("Stopping server");
-            stop(1000);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }  
-    }
-
-    public void sendList (WebSocket conn) {
-        JSONObject objResponse = new JSONObject("{}");
-        objResponse.put("type", "list");
-        objResponse.put("from", "server");
-        objResponse.put("list", getClients());
-        conn.send(objResponse.toString()); 
-    }
-
-  
-
-    public String getConnectionId (WebSocket connection) {
-        String name = connection.toString();
-        return name.replaceAll("org.java_websocket.WebSocketImpl@", "").substring(0, 3);
-    }
-
-    public String[] getClients () {
-        int length = getConnections().size();
-        String[] clients = new String[length];
-        int cnt = 0;
-
-        for (WebSocket ws : getConnections()) {
-            clients[cnt] = getConnectionId(ws);               
-            cnt++;
+    public static boolean coloresIguales(String col1, String col2) {
+        if (col1.equalsIgnoreCase(col2)) {
+            return true;
         }
-        return clients;
+        modificarSinRepeticiones(board);
+        return false;
     }
 
+    public static List<String> modificarSinRepeticiones(List<String> lista) {
+        Set<String> nombresRepetidos = new HashSet<>();
+        Set<String> nombresNoRepetidos = new HashSet<>();
 
-    public WebSocket getClientById (String clientId) {
-        for (WebSocket ws : getConnections()) {
-            String wsId = getConnectionId(ws);
-            if (clientId.compareTo(wsId) == 0) {
-                return ws;
-            }               
+        for (String nombre : lista) {
+            if (!nombresNoRepetidos.add(nombre)) {
+                // Si el nombre ya está en nombresNoRepetidos, entonces es repetido
+                nombresRepetidos.add(nombre);
+            }
         }
-        
-        return null;
-    }
 
-    public List<String> getBoard() {
-        return board;
-    }
+        for (int i = 0; i < lista.size(); i++) {
+            String elementoActual = lista.get(i);
 
-    // Setter para establecer la lista completa
-    public void setBoard(List<String> board) {
-        this.board = board;
+            if (!nombresRepetidos.contains(elementoActual)) {
+                // Si el elemento no está en nombresRepetidos, se reemplaza con '-'
+                lista.set(i, "-");
+            }
+        }
+        return lista;
     }
 
     public static List<String> convertirJSONArrayALista(JSONArray jsonArray) {
@@ -277,4 +244,42 @@ public class ChatServer extends WebSocketServer {
 
         return lista;
     }
+
+    /*
+     * JSONObject objResponse = new JSONObject("{}");
+     * objResponse.put("type", "broadcast");
+     * objResponse.put("list", getBoard());
+     * broadcast(objResponse.toString());
+     */
+
+    @Override
+    public void onError(WebSocket conn, Exception ex) {
+        // Quan hi ha un error
+        ex.printStackTrace();
+    }
+
+    public void runServerBucle() {
+        boolean running = true;
+        try {
+            System.out.println("Starting server");
+            start();
+            while (running) {
+                String line;
+                line = in.readLine();
+                if (line.equals("exit")) {
+                    running = false;
+                }
+            }
+            System.out.println("Stopping server");
+            stop(1000);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getConnectionId(WebSocket connection) {
+        String name = connection.toString();
+        return name.replaceAll("org.java_websocket.WebSocketImpl@", "").substring(0, 3);
+    }
+
 }
