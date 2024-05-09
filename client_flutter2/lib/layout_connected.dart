@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'app_data.dart';
+import 'gameover.dart'; // Asegúrate de importar correctamente tu pantalla GameOver
 
 class LayoutConnected extends StatefulWidget {
   const LayoutConnected({Key? key}) : super(key: key);
@@ -13,10 +14,21 @@ class _LayoutConnectedState extends State<LayoutConnected> {
   @override
   Widget build(BuildContext context) {
     AppData appData = Provider.of<AppData>(context);
-    String usuario = appData.usu;
-    String enemigo = appData.enemigo;
-    int puntuRival = appData.puntuacionRival;
-    int miPuntuacion = appData.miPuntuacion;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (appData.partidaTerminada) {
+        String ganador = appData.ganador;
+        int puntos = appData.puntosGanador;
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => GameOverScreen(
+                      winner: ganador,
+                      score: puntos,
+                    )));
+        appData.partidaTerminada = false; // Reset the game end flag
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -30,9 +42,19 @@ class _LayoutConnectedState extends State<LayoutConnected> {
           Padding(
             padding: EdgeInsets.only(top: 40.0),
             child: Text(
-              '$usuario : $miPuntuacion              $enemigo : $puntuRival.',
+              '${appData.usu} : ${appData.miPuntuacion}              ${appData.enemigo} : ${appData.puntuacionRival}',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(height: 20.0),
+          Center(
+            child: Text(
+              appData.tuTurno ? "Tu Turno" : "Turno Rival",
+              style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                  color: appData.tuTurno ? Colors.green : Colors.red),
             ),
           ),
           const SizedBox(height: 20.0),
@@ -83,8 +105,7 @@ class _ImageGridViewState extends State<ImageGridView> {
     if (processingClick) {
       return;
     }
-
-    if (appData.tuTurno == true && !clickedIndices.contains(index)) {
+    if (appData.tuTurno) {
       setState(() {
         processingClick = true;
         clickedIndices.add(index);
@@ -92,7 +113,7 @@ class _ImageGridViewState extends State<ImageGridView> {
         String color = appData.boardColors[index];
         imagePaths[index] = 'assets/$color.png';
         appData.board[index] = color;
-        print(index);
+        print("Clic en la imagen en índice: $index and ${appData.tuTurno}");
         appData.messageBoard(index);
 
         processingClick = false;
@@ -103,9 +124,8 @@ class _ImageGridViewState extends State<ImageGridView> {
   @override
   Widget build(BuildContext context) {
     AppData appData = Provider.of<AppData>(context);
-    if (appData.tuTurno == false || appData.plat == "android") {
-      updateImagesAutomatically(appData);
-    }
+    updateImagesAutomatically(appData);
+
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4,

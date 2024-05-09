@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
+import 'package:client_flutter/gameover.dart';
 import 'package:client_flutter/layout_connected.dart';
 import 'package:flutter/material.dart';
 
@@ -24,6 +26,10 @@ class AppData with ChangeNotifier {
   bool tuTurno = false;
   int puntuacionRival = 0;
   int miPuntuacion = 0;
+  bool partidaTerminada = false;
+  String ganador = "";
+  int puntosGanador = 0;
+
   List<dynamic> board = [
     "-",
     "-",
@@ -105,16 +111,21 @@ class AppData with ChangeNotifier {
             if (data['value'] == "android") {
               tuTurno = true;
             }
+
+          case "finDelJuego":
+            partidaTerminada = true;
+            ganador = data['ganador'];
+            puntosGanador = data['puntuacion'];
+            notifyListeners(); // Notifica a los listeners sobre el cambio.
+            break;
           case "board":
-            notifyListeners();
             tuTurno =
                 data["turno"].toString().toLowerCase() == usu.toLowerCase();
-
-            board.clear();
-            board = data["list"];
-
+            board = List.from(data["list"]);
             print(board);
+            notifyListeners(); // Asegúrate de que esto esté después de la actualización de datos
             break;
+
           case 'list':
             boardColors = data["list"];
             break;

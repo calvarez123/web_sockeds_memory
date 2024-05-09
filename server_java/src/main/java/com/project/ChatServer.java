@@ -156,6 +156,7 @@ public class ChatServer extends WebSocketServer {
                                         break;
                                     }
                                 }
+                                
                                 JSONObject objResponse3 = new JSONObject("{}");
                                 objResponse3.put("type", "board");
                                 objResponse3.put("turno", otroNombre);
@@ -189,6 +190,21 @@ public class ChatServer extends WebSocketServer {
                 broadcast(objResponse.toString());
 
             }
+            if (tableroCompleto()) {
+                Map.Entry<String, Integer> ganador = determinarGanador();
+                JSONObject objResponse = new JSONObject();
+                objResponse.put("type", "finDelJuego");
+                if (ganador != null) {
+                    objResponse.put("ganador", ganador.getKey());
+                    objResponse.put("puntuacion", ganador.getValue());
+                } else {
+                    objResponse.put("ganador", "Empate");
+                    objResponse.put("puntuacion", 0);
+                }
+                broadcast(objResponse.toString());
+            }
+            
+            
 
         } catch (
 
@@ -281,5 +297,22 @@ public class ChatServer extends WebSocketServer {
         String name = connection.toString();
         return name.replaceAll("org.java_websocket.WebSocketImpl@", "").substring(0, 3);
     }
+
+    public boolean tableroCompleto() {
+        return !board.contains("-");
+    }
+
+    public Map.Entry<String, Integer> determinarGanador() {
+        Map.Entry<String, Integer> maxEntry = null;
+        for (Map.Entry<String, Integer> entry : connectedClients.entrySet()) {
+            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
+                maxEntry = entry;
+            }
+        }
+        return maxEntry; // Retorna la entrada completa del ganador
+    }
+    
+    
+    
 
 }
