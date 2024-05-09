@@ -113,7 +113,7 @@ class _ImageGridViewState extends State<ImageGridView> {
         String color = appData.boardColors[index];
         imagePaths[index] = 'assets/$color.png';
         appData.board[index] = color;
-        print("Clic en la imagen en índice: $index and ${appData.tuTurno}");
+
         appData.messageBoard(index);
 
         processingClick = false;

@@ -29,6 +29,7 @@ class AppData with ChangeNotifier {
   bool partidaTerminada = false;
   String ganador = "";
   int puntosGanador = 0;
+  Map<String, dynamic> jugadores = {};
 
   List<dynamic> board = [
     "-",
@@ -103,7 +104,6 @@ class AppData with ChangeNotifier {
         switch (data['type']) {
           case "turno":
             tuTurno = true;
-            print("lo recibi");
 
             break;
           case "tetoca":
@@ -122,7 +122,25 @@ class AppData with ChangeNotifier {
             tuTurno =
                 data["turno"].toString().toLowerCase() == usu.toLowerCase();
             board = List.from(data["list"]);
-            print(board);
+            jugadores = Map.from(data["lista"]);
+            /*PUNTUACION*/
+
+            if (jugadores.containsKey(usu)) {
+              miPuntuacion = jugadores[usu];
+            }
+            if (jugadores.containsKey(enemigo)) {
+              puntuacionRival = jugadores[enemigo];
+            } else {
+              // Busca y actualiza la puntuación del enemigo si el nombre del enemigo ha cambiado
+              for (String key in jugadores.keys) {
+                if (key != usu) {
+                  enemigo = key;
+                  puntuacionRival = jugadores[key];
+                  break;
+                }
+              }
+            }
+            print(jugadores);
             notifyListeners(); // Asegúrate de que esto esté después de la actualización de datos
             break;
 
@@ -131,7 +149,7 @@ class AppData with ChangeNotifier {
             break;
           case 'lista':
             notifyListeners();
-            print(data["lista"]);
+
             Map<String, dynamic> mapa =
                 data["lista"]; // No necesitas jsonDecode
             List<String> claves = mapa.keys.toList();
