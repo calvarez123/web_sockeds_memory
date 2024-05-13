@@ -33,6 +33,7 @@ public class AppData {
     private Map<String, Integer> localConnectedClients = new HashMap<>();
 
     CtrlLayoutConnected layautcoenConnected = new CtrlLayoutConnected();
+     CtrlLayoutGameOver layoutGameOver = new CtrlLayoutGameOver();
     String playerName = "";
     String otroJugador = "No hay nadie";
 
@@ -42,7 +43,11 @@ public class AppData {
             Arrays.asList("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"));
 
     public enum ConnectionStatus {
-        DISCONNECTED, DISCONNECTING, CONNECTING, CONNECTED
+        DISCONNECTED, DISCONNECTING, CONNECTING, CONNECTED,GAMEOVER
+    }
+
+    public void setLayoutGameOver(CtrlLayoutGameOver layoutGameOver) {
+        this.layoutGameOver = layoutGameOver;
     }
 
     private AppData() {
@@ -194,6 +199,19 @@ public class AppData {
                         "0", otroJugador,
                         "0"));
 
+                break;
+                case "finDelJuego":
+                connectionStatus = ConnectionStatus.GAMEOVER;
+                String ganador = data.getString("ganador");
+                String puntuacion = String.valueOf(data.getInt("puntuacion"));
+
+                Platform.runLater(() -> {
+                    UtilsViews.setViewAnimating("GameOver");
+                    if (layoutGameOver != null) {
+                        System.out.println("holaaaaaa");
+                        layoutGameOver.actualizarDatos(ganador, puntuacion);
+                    }
+                });
                 break;
             default:
                 break;

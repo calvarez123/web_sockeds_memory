@@ -12,7 +12,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.CtrlLayoutConnected">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.CtrlLayoutConnected">
     <children>
       <AnchorPane prefHeight="55.0" style="-fx-background-color: #95c3ff;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
@@ -103,22 +103,17 @@
                   <Image url="@imagen_inicial.jpg" />
                </image>
             </ImageView>
-            <ImageView fx:id="imagen2" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1">
+            <ImageView fx:id="imagen2" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
                <image>
                   <Image url="@imagen_inicial.jpg" />
                </image>
             </ImageView>
-            <ImageView fx:id="imagen3" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2">
+            <ImageView fx:id="imagen3" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
                <image>
                   <Image url="@imagen_inicial.jpg" />
                </image>
             </ImageView>
-            <ImageView fx:id="imagen5" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
-               <image>
-                  <Image url="@imagen_inicial.jpg" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="imagen4" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="3">
+            <ImageView fx:id="imagen4" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3">
                <image>
                   <Image url="@imagen_inicial.jpg" />
                </image>
@@ -128,22 +123,17 @@
                   <Image url="@imagen_inicial.jpg" />
                </image>
             </ImageView>
-            <ImageView fx:id="imagen7" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <ImageView fx:id="imagen7" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <image>
                   <Image url="@imagen_inicial.jpg" />
                </image>
             </ImageView>
-            <ImageView fx:id="imagen8" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <ImageView fx:id="imagen8" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="1">
                <image>
                   <Image url="@imagen_inicial.jpg" />
                </image>
             </ImageView>
-            <ImageView fx:id="imagen9" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
-               <image>
-                  <Image url="@imagen_inicial.jpg" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="imagen10" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1">
+            <ImageView fx:id="imagen10" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <image>
                   <Image url="@imagen_inicial.jpg" />
                </image>
@@ -153,27 +143,37 @@
                   <Image url="@imagen_inicial.jpg" />
                </image>
             </ImageView>
-            <ImageView fx:id="imagen12" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="3">
+            <ImageView fx:id="imagen12" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="2">
                <image>
                   <Image url="@imagen_inicial.jpg" />
                </image>
             </ImageView>
-            <ImageView fx:id="imagen13" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3">
+            <ImageView fx:id="imagen15" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="3">
                <image>
                   <Image url="@imagen_inicial.jpg" />
                </image>
             </ImageView>
-            <ImageView fx:id="imagen15" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="2">
-               <image>
-                  <Image url="@imagen_inicial.jpg" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="imagen14" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="1">
+            <ImageView fx:id="imagen14" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <image>
                   <Image url="@imagen_inicial.jpg" />
                </image>
             </ImageView>
             <ImageView fx:id="imagen16" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="3">
+               <image>
+                  <Image url="@imagen_inicial.jpg" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="imagen5" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1">
+               <image>
+                  <Image url="@imagen_inicial.jpg" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="imagen9" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2">
+               <image>
+                  <Image url="@imagen_inicial.jpg" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="imagen13" fitHeight="80.0" fitWidth="92.0" onMouseClicked="#imgpressed" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="3">
                <image>
                   <Image url="@imagen_inicial.jpg" />
                </image>

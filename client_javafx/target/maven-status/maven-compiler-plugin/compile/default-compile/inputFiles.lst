@@ -1,8 +1,9 @@
-/home/super/repositorios/recuWEBSOCKEDS/web_sockeds_memory/client_javafx/src/main/java/com/project/AppSocketsClient.java
-/home/super/repositorios/recuWEBSOCKEDS/web_sockeds_memory/client_javafx/src/main/java/com/project/Main.java
-/home/super/repositorios/recuWEBSOCKEDS/web_sockeds_memory/client_javafx/src/main/java/com/project/CtrlLayoutConnected.java
-/home/super/repositorios/recuWEBSOCKEDS/web_sockeds_memory/client_javafx/src/main/java/com/project/CtrlLayoutDisconnecting.java
-/home/super/repositorios/recuWEBSOCKEDS/web_sockeds_memory/client_javafx/src/main/java/com/project/CtrlLayoutDisconnected.java
-/home/super/repositorios/recuWEBSOCKEDS/web_sockeds_memory/client_javafx/src/main/java/com/project/AppData.java
-/home/super/repositorios/recuWEBSOCKEDS/web_sockeds_memory/client_javafx/src/main/java/com/project/CtrlLayoutConnecting.java
-/home/super/repositorios/recuWEBSOCKEDS/web_sockeds_memory/client_javafx/src/main/java/com/project/UtilsViews.java
+/home/super/web_sockeds_memory/client_javafx/src/main/java/com/project/AppSocketsClient.java
+/home/super/web_sockeds_memory/client_javafx/src/main/java/com/project/CtrlLayoutConnecting.java
+/home/super/web_sockeds_memory/client_javafx/src/main/java/com/project/CtrlLayoutGameOver.java
+/home/super/web_sockeds_memory/client_javafx/src/main/java/com/project/CtrlLayoutDisconnected.java
+/home/super/web_sockeds_memory/client_javafx/src/main/java/com/project/AppData.java
+/home/super/web_sockeds_memory/client_javafx/src/main/java/com/project/CtrlLayoutDisconnecting.java
+/home/super/web_sockeds_memory/client_javafx/src/main/java/com/project/UtilsViews.java
+/home/super/web_sockeds_memory/client_javafx/src/main/java/com/project/CtrlLayoutConnected.java
+/home/super/web_sockeds_memory/client_javafx/src/main/java/com/project/Main.java

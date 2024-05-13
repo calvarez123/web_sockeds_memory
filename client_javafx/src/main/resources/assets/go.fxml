@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.CtrlLayoutGameOver">
+   <children>
+      <Label alignment="CENTER" layoutX="-3.0" prefHeight="54.0" prefWidth="606.0" text="GAME OVER">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Label>
+      <Text fx:id="ganador" layoutX="120.0" layoutY="173.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="359.7294921875">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Text>
+      <Text fx:id="puntuacion" layoutX="120.0" layoutY="283.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="379.7294921875">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Text>
+      <Label alignment="CENTER" layoutX="-3.0" layoutY="67.0" prefHeight="54.0" prefWidth="606.0" text="El ganador es: ">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
